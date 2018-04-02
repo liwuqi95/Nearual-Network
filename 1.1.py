@@ -57,7 +57,7 @@ def buildGraph(hu, lr):
 
 # init some constant
 learning_rate = 0.001
-batch_size = 500
+batch_size = 200
 training_size = 15000
 
 hidden_units = 1000
