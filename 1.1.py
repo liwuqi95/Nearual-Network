@@ -59,7 +59,7 @@ learning_rate = 0.01
 batch_size = 500
 training_size = 15000
 
-max_iter = 500
+max_iter = 50
 
 trainError_list = []
 validError_list = []
@@ -114,12 +114,28 @@ for k in range(0, max_iter - 1):
 
 
 plt.figure(1)
-plt.plot(epoch_list, trainError_list,'-', label = "training set error")
-plt.plot(epoch_list, validError_list,'-', label = "validation set error")
-plt.plot(epoch_list, testError_list,'-', label = "test set error")
+plt.plot(epoch_list, trainError_list,'-', label = "training set")
+plt.plot(epoch_list, validError_list,'-', label = "validation set")
+plt.plot(epoch_list, testError_list,'-', label = "test set")
+
+plt.xlabel('number of epoches')
+plt.ylabel('error')
 plt.legend()
 
-plt.title("Nearul Network")
+plt.title("Nearul Network Errors")
+plt.show()
+
+
+
+
+plt.figure(2)
+plt.plot(epoch_list, loss_list,'-', label = "training set")
+
+plt.xlabel('number of epoches')
+plt.ylabel('cross entropy loss')
+plt.legend()
+
+plt.title("Nearul Network loss")
 plt.show()
 
 
