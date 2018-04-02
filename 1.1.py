@@ -130,7 +130,7 @@ plt.xlabel('number of epoches')
 plt.ylabel('error')
 plt.legend()
 
-plt.title("Nearul Network Errors with learning rate " + str(learning_rate)
+plt.title("Nearul Network Errors with learning rate " + str(learning_rate))
 plt.show()
 
 
@@ -143,7 +143,7 @@ plt.xlabel('number of epoches')
 plt.ylabel('cross entropy loss')
 plt.legend()
 
-plt.title("Nearul Network loss with learning rate " + str(learning_rate)
+plt.title("Nearul Network loss with learning rate " + str(learning_rate))
 plt.show()
 
 
