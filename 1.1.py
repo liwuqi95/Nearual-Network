@@ -1,5 +1,6 @@
 import tensorflow as tf
 import numpy as np
+import matplotlib.pyplot as plt
 
 with np.load("notMNIST.npz") as data:
     Data, Target = data ["images"], data["labels"]
@@ -15,8 +16,10 @@ with np.load("notMNIST.npz") as data:
 
 
 def weighted_sum(X, unit_num):
-    W = tf.get_variable('W', shape=(784, unit_num), initializer=tf.contrib.layers.xavier_initializer()) 
-    b = tf.get_variable('b', shape=(unit_num), initializer= tf.initializers.zeros())
+    initializer = tf.contrib.layers.xavier_initializer()
+    W = tf.Variable(initializer([X.shape[1].value, unit_num]), name='W')
+    b = tf.Variable(tf.zeros(unit_num), name='b')
+
     return tf.add(tf.matmul(X, W), b)
 
 
@@ -54,7 +57,7 @@ learning_rate = 0.01
 batch_size = 500
 training_size = 15000
 
-max_iter = 200
+max_iter = 500
 
 trainError_list = []
 validError_list = []
@@ -64,8 +67,9 @@ loss_list = []
 
 epoch_list = []
 
+numBatches = np.floor(len(trainData)/batch_size)
 
-X, y_target, y_predicted, crossEntropyError, train, accuracy = buildGraph(learning_rate)
+X, y_target, y_predicted, crossEntropyLoss, train, accuracy = buildGraph(learning_rate)
 
 init = tf.global_variables_initializer()
 sess = tf.InteractiveSession()
@@ -73,44 +77,48 @@ sess = tf.InteractiveSession()
 sess.run(init)
 
 for k in range(0, max_iter - 1):
-	index = (batch_size * k)/training_size
+	index = (batch_size * k) % training_size
 
-	batch_Data = trainData[index: index + batchSize]
-	batch_Target = trainTarget[index: index + batchSize]
+	batch_Data = trainData[index: index + batch_size]
+	batch_Target = trainTarget[index: index + batch_size]
 
     #learning
-	_, loss, y_predicted, accuracy = sess.run([train, crossEntropyLoss, y_predicted, accuracy], feed_dict = {X: batch_Data, y_target: batch_Target})
-	
-	#get cross entropy loss
-	loss_list.append(loss)
+	_, loss, yhat, accu = sess.run([train, crossEntropyLoss, y_predicted, accuracy], feed_dict = {X: batch_Data, y_target: batch_Target})
 
-	#get training error
-	err = 1 - accuracy.eval(feed_dict = {X: trainData, y_target: trainTarget})
-	trainError_list.append(err)
+	print(k)
+	if index == 0:
+		#get cross entropy loss
+		loss_list.append(loss)
 
-	#get validation error
-	err = 1 - accuracy.eval(feed_dict = {X: validData, y_target: validTarget})
-	validError_list.append(err)
+		#get training error
+		accu = accuracy.eval(feed_dict = {X: trainData, y_target: trainTarget})
+		trainError_list.append(1 - accu)
 
-	#get test error
-	err = 1 - accuracy.eval(feed_dict = {X: trainData, y_target: trainTarget})
-	testError_list.append(err)
+		#get validation error
+		accu = accuracy.eval(feed_dict = {X: validData, y_target: validTarget})
+		validError_list.append(1 - accu)
 
+		#get test error
+		accu = accuracy.eval(feed_dict = {X: testData, y_target: testTarget})
+		testError_list.append(1 - accu)
 
-	#set index
-	epoch_list.append(k)
+		#get index
+		i = int((batch_size * k) / training_size)
 
-	if not step % (batchSize * 5):
-                print("step - %d"%(step))
+		#set index
+		epoch_list.append(i)
+
+	if not (k % (max_iter / 10)):
+		print(" In progress " + str(100 * k / max_iter)  + "%")
 
 
 plt.figure(1)
-plt.plot(epoch_list[0], trainError_list[0],'-', label = "training set error")
-plt.plot(epoch_list[0], validError_list[1],'-', label = "validation set error")
-plt.plot(epoch_list[0], testError_list[2],'-', label = "test set error")
+plt.plot(epoch_list, trainError_list,'-', label = "training set error")
+plt.plot(epoch_list, validError_list,'-', label = "validation set error")
+plt.plot(epoch_list, testError_list,'-', label = "test set error")
 plt.legend()
 
-plt.title("Nearul Netword")
+plt.title("Nearul Network")
 plt.show()
 
 
