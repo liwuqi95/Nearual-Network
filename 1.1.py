@@ -26,7 +26,7 @@ def weighted_sum(X, unit_num):
     return tf.add(tf.matmul(X, W), b)
 
 
-def buildGraph(lr):
+def buildGraph(hu, lr):
 
 	#inputs
 	X = tf.placeholder(tf.float32, [None, 28, 28], name='input_x')
@@ -37,7 +37,7 @@ def buildGraph(lr):
 	y_onehot = tf.one_hot(tf.to_int32(y_target), 10, 1.0, 0.0, axis = -1)
 
 	#get sums
-	sums = weighted_sum(X_flatten, 1000)
+	sums = weighted_sum(X_flatten, hu)
 	y_predicted = weighted_sum(tf.nn.relu(sums), 10)
 
 	#get cross entropy error
@@ -56,11 +56,13 @@ def buildGraph(lr):
 
 
 # init some constant
-learning_rate = 0.01
-batch_size = 500
+learning_rate = 0.001
+batch_size = 100
 training_size = 15000
 
-max_iter = 50
+hidden_units = 1000
+
+max_iter = 20000
 
 trainError_list = []
 validError_list = []
@@ -72,7 +74,7 @@ epoch_list = []
 
 numBatches = np.floor(len(trainData)/batch_size)
 
-X, y_target, y_predicted, crossEntropyLoss, train, accuracy = buildGraph(learning_rate)
+X, y_target, y_predicted, crossEntropyLoss, train, accuracy = buildGraph(hidden_units, learning_rate)
 
 init = tf.global_variables_initializer()
 sess = tf.InteractiveSession()
@@ -112,6 +114,11 @@ for k in range(0, max_iter - 1):
 
 	if not (k % (max_iter / 10)):
 		print(" In progress " + str(100 * k / max_iter)  + "%")
+
+
+print("Final loss is  " + str(loss_list[-1]))
+print("Validation error is " + str(validError_list[-1]))
+print("Test error is " + str(testError_list[-1]))
 
 
 plt.figure(1)
