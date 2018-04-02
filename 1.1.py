@@ -15,8 +15,8 @@ with np.load("notMNIST.npz") as data:
 
 
 def weighted_sum(X, unit_num):
-    W = tf.get_variable(shape=[784, 10, unit_num],initializer=tf.contrib.layers.xavier_initializer())
-    b = tf.Variable(tf.zeros(unit_num), name='biases')
+    W = tf.get_variable('W', shape=(784, unit_num), initializer=tf.contrib.layers.xavier_initializer()) 
+    b = tf.get_variable('b', shape=(unit_num), initializer= tf.initializers.zeros())
     return tf.add(tf.matmul(X, W), b)
 
 
@@ -49,13 +49,7 @@ def buildGraph(lr):
 
 
 
-
-
-
-
-
-
-
+# init some constant
 learning_rate = 0.01
 batch_size = 500
 training_size = 15000
@@ -73,15 +67,18 @@ epoch_list = []
 
 X, y_target, y_predicted, crossEntropyError, train, accuracy = buildGraph(learning_rate)
 
+init = tf.global_variables_initializer()
+sess = tf.InteractiveSession()
 
+sess.run(init)
 
 for k in range(0, max_iter - 1):
 	index = (batch_size * k)/training_size
 
 	batch_Data = trainData[index: index + batchSize]
-    batch_Target = trainTarget[index: index + batchSize]
+	batch_Target = trainTarget[index: index + batchSize]
 
-   	#learning
+    #learning
 	_, loss, y_predicted, accuracy = sess.run([train, crossEntropyLoss, y_predicted, accuracy], feed_dict = {X: batch_Data, y_target: batch_Target})
 	
 	#get cross entropy loss
