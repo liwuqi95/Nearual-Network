@@ -2,6 +2,8 @@ import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+
 with np.load("notMNIST.npz") as data:
     Data, Target = data ["images"], data["labels"]
     np.random.seed(521)
@@ -85,7 +87,6 @@ for k in range(0, max_iter - 1):
     #learning
 	_, loss, yhat, accu = sess.run([train, crossEntropyLoss, y_predicted, accuracy], feed_dict = {X: batch_Data, y_target: batch_Target})
 
-	print(k)
 	if index == 0:
 		#get cross entropy loss
 		loss_list.append(loss)
