@@ -1,6 +1,7 @@
 import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
+from math import e
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
@@ -47,7 +48,7 @@ def buildGraph(lr):
 
 	#init optimizer
 	optimizer = tf.train.AdamOptimizer(learning_rate = lr)
-	train = optimizer.minimize(loss=crossEntropyLoss)
+	train = optimizer.minimize(loss=(crossEntropyLoss + 3 * e - 4))
 
 	return X, y_target, y_predicted, crossEntropyLoss, train, accuracy
 
