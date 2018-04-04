@@ -37,8 +37,13 @@ def buildGraph(hu, lr):
 	y_onehot = tf.one_hot(tf.to_int32(y_target), 10, 1.0, 0.0, axis = -1)
 
 	#get sums
-	sums = weighted_sum(X_flatten, hu)
-	y_predicted = weighted_sum(tf.nn.relu(sums), 10)
+	sums = tf.nn.relu(weighted_sum(X_flatten, hu))
+
+	#apply drop out
+	drop_out = tf.nn.dropout(sums, 0.5)
+
+	#output layer
+	y_predicted = weighted_sum(drop_out, 10)
 
 	#get cross entropy error
 	crossEntropyLoss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels = y_onehot, logits = y_predicted))
