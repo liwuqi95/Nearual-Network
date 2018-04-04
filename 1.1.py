@@ -26,7 +26,7 @@ def weighted_sum(X, unit_num):
     return tf.add(tf.matmul(X, W), b)
 
 
-def buildGraph(hu, lr):
+def buildGraph(learning_rate, num_layers, hidden_units, dropout):
 
 	#inputs
 	X = tf.placeholder(tf.float32, [None, 28, 28], name='input_x')
@@ -36,14 +36,21 @@ def buildGraph(hu, lr):
 	X_flatten = tf.reshape(X, [-1, 28*28])
 	y_onehot = tf.one_hot(tf.to_int32(y_target), 10, 1.0, 0.0, axis = -1)
 
-	#get sums
-	sums = tf.nn.relu(weighted_sum(X_flatten, hu))
 
-	#apply drop out
-	drop_out = tf.nn.dropout(sums, 0.5)
+	#init the input
+	sums = X_flatten
+
+	for i in range(1, num_layers):
+
+		#get sums
+		sums = tf.nn.relu(weighted_sum(sums, hidden_units))
+
+		if dropout:
+			#apply drop out
+			sums = tf.nn.dropout(sums, 0.5)
 
 	#output layer
-	y_predicted = weighted_sum(drop_out, 10)
+	y_predicted = weighted_sum(sums, 10)
 
 	#get cross entropy error
 	crossEntropyLoss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels = y_onehot, logits = y_predicted))
@@ -52,7 +59,7 @@ def buildGraph(hu, lr):
 	accuracy = tf.reduce_mean(tf.to_float(tf.equal(tf.argmax(y_predicted, -1), tf.to_int64(y_target))))
 
 	#init optimizer
-	optimizer = tf.train.AdamOptimizer(learning_rate = lr)
+	optimizer = tf.train.AdamOptimizer(learning_rate = learning_rate)
 	train = optimizer.minimize(loss=(crossEntropyLoss + 3 * e - 4))
 
 	return X, y_target, y_predicted, crossEntropyLoss, train, accuracy
@@ -60,26 +67,35 @@ def buildGraph(hu, lr):
 
 
 
-# init some constant
-learning_rate = 0.001
-batch_size = 200
+# contants
 training_size = 15000
 
+
+
+# init hyper parameters
+learning_rate = 0.001
+batch_size = 200
+
+
+num_layers = 1
 hidden_units = 1000
 
 max_iter = 20000
+
+dropout = False
+
+# vairables for uses
 
 trainError_list = []
 validError_list = []
 testError_list = []
 
 loss_list = []
-
 epoch_list = []
 
 numBatches = np.floor(len(trainData)/batch_size)
 
-X, y_target, y_predicted, crossEntropyLoss, train, accuracy = buildGraph(hidden_units, learning_rate)
+X, y_target, y_predicted, crossEntropyLoss, train, accuracy = buildGraph(learning_rate, num_layers, hidden_units, dropout)
 
 init = tf.global_variables_initializer()
 sess = tf.InteractiveSession()
@@ -117,8 +133,8 @@ for k in range(0, max_iter - 1):
 		#set index
 		epoch_list.append(i)
 
-	if not (k % (max_iter / 10)):
-		print(" In progress " + str(100 * k / max_iter)  + "%")
+	if not (k % (max_iter / 4)):
+		print(" In progress " + str(25 * k / max_iter)  + "%")
 
 
 print("Final loss is  " + str(loss_list[-1]))
