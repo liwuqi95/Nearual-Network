@@ -134,10 +134,13 @@ for k in range(0, max_iter - 1):
 		epoch_list.append(i)
 
 	if not (k % (max_iter / 4)):
-		print(" In progress " + str(25 * k / max_iter)  + "%")
+		print(" In progress " + str(100 * k / max_iter)  + "%")
 
 
 print("Final loss is  " + str(loss_list[-1]))
+
+
+print("Training error is " + str(trainError_list[-1]))
 print("Validation error is " + str(validError_list[-1]))
 print("Test error is " + str(testError_list[-1]))
 
