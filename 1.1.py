@@ -39,8 +39,10 @@ def buildGraph(learning_rate, num_layers, hidden_units, dropout):
 
 	#init the input
 	sums = X_flatten
+	# sums = tf.nn.relu(weighted_sum(sums, hidden_units))
 
-	for i in range(1, num_layers):
+
+	for i in range(0, num_layers):
 
 		#get sums
 		sums = tf.nn.relu(weighted_sum(sums, hidden_units))
