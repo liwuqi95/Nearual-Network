@@ -171,7 +171,7 @@ for learning_rate in lrs:
 			testError_list.append(1 - accu)
 
 
-			if (early_n_e > validError_list[-1]):
+			if (early_v_e > validError_list[-1]):
 				early_i = i
 				early_n_e = trainError_list[-1]
 				early_v_e = validError_list[-1]
