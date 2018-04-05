@@ -57,9 +57,9 @@ def buildGraph(learning_rate, num_layers, hidden_units, dropout, weight_decay):
 			input_x = tf.nn.dropout(input_x, 0.5)
 
 	#output layer
-	y_predicted, W = weighted_sum(input_x, 10)
+	y_predicted, W_out = weighted_sum(input_x, 10)
 
-	weight_loss += tf.reduce_sum(W*W) * weight_decay * 0.5
+	weight_loss += tf.reduce_sum(W_out*W_out) * weight_decay * 0.5
 
 	#get cross entropy error
 	crossEntropyLoss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels = y_onehot, logits = y_predicted))
@@ -72,7 +72,7 @@ def buildGraph(learning_rate, num_layers, hidden_units, dropout, weight_decay):
 	optimizer = tf.train.AdamOptimizer(learning_rate = learning_rate)
 	train = optimizer.minimize(loss=(crossEntropyLoss + weight_loss))
 
-	return X, y_target, y_predicted, crossEntropyLoss, train, accuracy
+	return X, y_target, y_predicted, crossEntropyLoss, train, accuracy,W
 
 
 
@@ -80,22 +80,22 @@ def buildGraph(learning_rate, num_layers, hidden_units, dropout, weight_decay):
 # contants
 training_size = 15000
 batch_size = 200
-max_iter = 40000
+max_iter = 20001
 
 
 # hyper parameters
 learning_rate = 0.00003
 weight_decay = 0.0001
 dropout = False
-num_layers = 3
-hidden_units = 300
+num_layers = 1
+hidden_units = 1000
 
 
 # other parameterys
 
-image_w = False
+image_w = True
 plot = False
-random = True
+random = False
 
 
 # random parameters
@@ -129,7 +129,7 @@ for learning_rate in lrs:
 	loss_list = []
 	epoch_list = []
 
-	X, y_target, y_predicted, crossEntropyLoss, train, accuracy = buildGraph(learning_rate, num_layers, hidden_units, dropout, weight_decay)
+	X, y_target, y_predicted, crossEntropyLoss, train, accuracy,W = buildGraph(learning_rate, num_layers, hidden_units, dropout, weight_decay)
 
 	init = tf.global_variables_initializer()
 	sess = tf.InteractiveSession()
@@ -147,7 +147,7 @@ for learning_rate in lrs:
 		batch_Target = trainTarget[index: index + batch_size]
 
 	    #learning
-		_, loss, yhat, accu = sess.run([train, crossEntropyLoss, y_predicted, accuracy], feed_dict = {X: batch_Data, y_target: batch_Target})
+		_, loss, yhat, accu, currentW = sess.run([train, crossEntropyLoss, y_predicted, accuracy, W], feed_dict = {X: batch_Data, y_target: batch_Target})
 
 		if index == 0:
 
@@ -188,17 +188,32 @@ for learning_rate in lrs:
 			print(" In progress " + str(100 * k / max_iter)  + "%")
 
 
-			if image_w:
+			if image_w and (int(100 * k / max_iter) == 25 or int(100 * k / max_iter) == 100):
 
-				currentW = tf.get_default_graph().get_tensor_by_name("W:0")
+				print((currentW.transpose()).shape)
+				currentW = currentW.transpose()
 
-				img = tf.reshape(currentW, shape=[-1, 28, 28, 1])
+				for i in range(0, currentW.shape[1]):
+					index = i % 100
+					if (index == 0):
+						plt.figure()
 
-				summary = sess.run(tf.summary.image("image" + str(k), img))
 
-				print(summary)
+					plt.subplot(10,10, index + 1)
+					img = np.reshape(currentW[i], (28,28))
 
-				writer.add_summary(summary)
+
+					plt.imshow(img, cmap=plt.gray(),interpolation='nearest')
+					plt.axis('off')
+
+
+					if (index == 99):
+						plt.show()
+
+
+
+
+
 
 
 	print("######### Hyper parameters #########")
