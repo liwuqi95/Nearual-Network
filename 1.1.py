@@ -80,12 +80,12 @@ def buildGraph(learning_rate, num_layers, hidden_units, dropout, weight_decay):
 # contants
 training_size = 15000
 batch_size = 200
-max_iter = 20001
+max_iter = 20000
 
 
 # hyper parameters
-learning_rate = 0.00003
-weight_decay = 0.0001
+learning_rate = 0.001
+weight_decay = 0
 dropout = False
 num_layers = 1
 hidden_units = 1000
@@ -136,11 +136,9 @@ for learning_rate in lrs:
 
 	sess.run(init)
 
-	writer = tf.summary.FileWriter("./logs/images")
-
 	early_v_e = 10000
 
-	for k in range(0, max_iter):
+	for k in range(0, max_iter + 1):
 		index = (batch_size * k) % training_size
 
 		batch_Data = trainData[index: index + batch_size]
@@ -274,24 +272,5 @@ if plot:
 
 	plt.title("Training loss with" + " layers = " + str(num_layers) +" hidden units = "+ str(hidden_units))
 	plt.show()
-
-
-
-
-writer.close()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
