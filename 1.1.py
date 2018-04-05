@@ -86,7 +86,7 @@ hidden_units = 1000
 # other parameterys
 
 image_w = False
-plot = False
+plot = True
 
 
 # random parameters
