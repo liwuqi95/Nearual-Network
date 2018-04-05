@@ -80,15 +80,15 @@ def buildGraph(learning_rate, num_layers, hidden_units, dropout, weight_decay):
 # contants
 training_size = 15000
 batch_size = 200
-max_iter = 20000
+max_iter = 40000
 
 
 # hyper parameters
-learning_rate = 0.001
-weight_decay = 0
+learning_rate = 0.00003
+weight_decay = 0.0001
 dropout = False
-num_layers = 2
-hidden_units = 500
+num_layers = 3
+hidden_units = 300
 
 
 # other parameterys
