@@ -49,7 +49,7 @@ def buildGraph(learning_rate, num_layers, hidden_units, dropout, weight_decay):
 		input_x = tf.nn.relu(sums)
 
 		if i == 0:
-			regulized_W = tf.reshape(W,[-1])
+			regulized_W = tf.cast(tf.reshape(W,[-1]), tf.float32)
 		else:
 			regulized_W = tf.concat(regulized_W, tf.reshape(W, [-1]), 0)
 
