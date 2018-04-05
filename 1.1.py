@@ -102,6 +102,8 @@ sess = tf.InteractiveSession()
 
 sess.run(init)
 
+writer = tf.summary.FileWriter("./logs/images")
+
 for k in range(0, max_iter):
 	index = (batch_size * k) % training_size
 
@@ -140,7 +142,9 @@ for k in range(0, max_iter):
 
 		img = tf.reshape(currentW, shape=[-1, 28, 28, 1])
 
-		tf.summary.image("image", img)
+		summary = tf.summary.image("image", img)
+
+		writer.add_summary(summary)
 
 
 print("Final loss is  " + str(loss_list[-1]))
@@ -179,7 +183,7 @@ plt.show()
 
 
 
-
+writer.close()
 
 
 
