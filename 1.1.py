@@ -92,7 +92,7 @@ learning_rate = np.power(10, np.random.uniform(-7.5, -4.5))
 num_layers = np.random.randint(1, 6)
 hidden_units = np.random.randint(100, 501)
 weight_decay = np.power(e, np.random.uniform(-9, -6))
-dropout = np.random.randint(1, 2)
+dropout = np.random.randint(0, 2)
 
 # other parameterys
 
