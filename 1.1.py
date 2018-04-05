@@ -26,7 +26,7 @@ def weighted_sum(X, unit_num):
     return tf.add(tf.matmul(X, W), b)
 
 
-def buildGraph(learning_rate, num_layers, hidden_units, dropout):
+def buildGraph(learning_rate, num_layers, hidden_units, dropout, weight_decay):
 
 	#inputs
 	X = tf.placeholder(tf.float32, [None, 28, 28], name='input_x')
@@ -60,7 +60,7 @@ def buildGraph(learning_rate, num_layers, hidden_units, dropout):
 
 	#init optimizer
 	optimizer = tf.train.AdamOptimizer(learning_rate = learning_rate)
-	train = optimizer.minimize(loss=(crossEntropyLoss + 3 * e - 4))
+	train = optimizer.minimize(loss=(crossEntropyLoss + weight_decay))
 
 	return X, y_target, y_predicted, crossEntropyLoss, train, accuracy
 
@@ -69,20 +69,33 @@ def buildGraph(learning_rate, num_layers, hidden_units, dropout):
 
 # contants
 training_size = 15000
-
-
-
-# init hyper parameters
-learning_rate = 0.001
 batch_size = 200
+max_iter = 20000
 
 
+# hyper parameters
+learning_rate = 0.001
+weight_decay = 3 * e - 4
+dropout = False
 num_layers = 1
 hidden_units = 1000
 
-max_iter = 20000
 
-dropout = False
+
+# random parameters
+np.random.seed(1000292033)
+
+learning_rate = np.power(10, np.random.uniform(-7.5, -4.5))
+
+
+num_layers = np.random.randint(1, 6)
+hidden_units = np.random.randint(100, 501)
+weight_decay = np.power(e, np.random.uniform(-9, -6))
+dropout = np.random.randint(1, 2)
+
+# other parameterys
+
+image_w = False
 
 # vairables for uses
 
@@ -95,7 +108,7 @@ epoch_list = []
 
 numBatches = np.floor(len(trainData)/batch_size)
 
-X, y_target, y_predicted, crossEntropyLoss, train, accuracy = buildGraph(learning_rate, num_layers, hidden_units, dropout)
+X, y_target, y_predicted, crossEntropyLoss, train, accuracy = buildGraph(learning_rate, num_layers, hidden_units, dropout, weight_decay)
 
 init = tf.global_variables_initializer()
 sess = tf.InteractiveSession()
@@ -138,21 +151,41 @@ for k in range(0, max_iter):
 	if not (k % (max_iter / 4)):
 		print(" In progress " + str(100 * k / max_iter)  + "%")
 
-		currentW = tf.get_default_graph().get_tensor_by_name("W:0")
 
-		img = tf.reshape(currentW, shape=[-1, 28, 28, 1])
+		if image_w:
 
-		summary = sess.run(tf.summary.image("image", img))
+			currentW = tf.get_default_graph().get_tensor_by_name("W:0")
 
-		writer.add_summary(summary)
+			img = tf.reshape(currentW, shape=[-1, 28, 28, 1])
+
+			summary = sess.run(tf.summary.image("image" + str(k), img))
+
+			print(summary)
+
+			writer.add_summary(summary)
 
 
-print("Final loss is  " + str(loss_list[-1]))
 
 
-print("Training error is " + str(trainError_list[-1]))
-print("Validation error is " + str(validError_list[-1]))
-print("Test error is " + str(testError_list[-1]))
+
+
+
+
+
+print("######### Hyper parameters #########")
+
+print("Learning rate    = " + str(learning_rate))
+print("Layers           = " + str(num_layers))
+print("Hidden units     = " + str (hidden_units))
+print("Weithed decay    = " + str(weight_decay))
+print("Dropout          = " + str(dropout))
+
+print("######### Result #########")
+
+print("Final loss       = " + str(loss_list[-1]))
+print("Training error   = " + str(trainError_list[-1]))
+print("Validation error = " + str(validError_list[-1]))
+print("Test error       = " + str(testError_list[-1]))
 
 
 plt.figure(1)
