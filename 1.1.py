@@ -39,8 +39,6 @@ def buildGraph(learning_rate, num_layers, hidden_units, dropout):
 
 	#init the input
 	sums = X_flatten
-	# sums = tf.nn.relu(weighted_sum(sums, hidden_units))
-
 
 	for i in range(0, num_layers):
 
@@ -104,7 +102,7 @@ sess = tf.InteractiveSession()
 
 sess.run(init)
 
-for k in range(0, max_iter - 1):
+for k in range(0, max_iter):
 	index = (batch_size * k) % training_size
 
 	batch_Data = trainData[index: index + batch_size]
@@ -137,6 +135,8 @@ for k in range(0, max_iter - 1):
 
 	if not (k % (max_iter / 4)):
 		print(" In progress " + str(100 * k / max_iter)  + "%")
+
+		print(sess.run(tf.get_default_graph().get_tensor_by_name("W:0")))
 
 
 print("Final loss is  " + str(loss_list[-1]))
