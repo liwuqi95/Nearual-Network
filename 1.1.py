@@ -97,6 +97,7 @@ dropout = np.random.randint(1, 2)
 # other parameterys
 
 image_w = False
+plot = False
 
 # vairables for uses
 
@@ -189,30 +190,31 @@ print("Validation error = " + str(validError_list[-1]))
 print("Test error       = " + str(testError_list[-1]))
 
 
-plt.figure(1)
-plt.plot(epoch_list, trainError_list,'-', label = "training set")
-plt.plot(epoch_list, validError_list,'-', label = "validation set")
-plt.plot(epoch_list, testError_list,'-', label = "test set")
+if plot:
+	plt.figure(1)
+	plt.plot(epoch_list, trainError_list,'-', label = "training set")
+	plt.plot(epoch_list, validError_list,'-', label = "validation set")
+	plt.plot(epoch_list, testError_list,'-', label = "test set")
 
-plt.xlabel('number of epoches')
-plt.ylabel('error')
-plt.legend()
+	plt.xlabel('number of epoches')
+	plt.ylabel('error')
+	plt.legend()
 
-plt.title("Nearul Network Errors with hidden units " + str(hidden_units))
-plt.show()
-
-
+	plt.title("Nearul Network Errors with hidden units " + str(hidden_units))
+	plt.show()
 
 
-plt.figure(2)
-plt.plot(epoch_list, loss_list,'-', label = "training set")
 
-plt.xlabel('number of epoches')
-plt.ylabel('cross entropy loss')
-plt.legend()
 
-plt.title("Nearul Network loss with hidden units " + str(hidden_units))
-plt.show()
+	plt.figure(2)
+	plt.plot(epoch_list, loss_list,'-', label = "training set")
+
+	plt.xlabel('number of epoches')
+	plt.ylabel('cross entropy loss')
+	plt.legend()
+
+	plt.title("Nearul Network loss with hidden units " + str(hidden_units))
+	plt.show()
 
 
 
