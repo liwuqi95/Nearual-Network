@@ -41,6 +41,8 @@ def buildGraph(learning_rate, num_layers, hidden_units, dropout, weight_decay):
 	#init the input
 	input_x = X_flatten
 
+	l2_loss = 0
+
 	for i in range(0, num_layers):
 
 		#get sums
@@ -48,10 +50,8 @@ def buildGraph(learning_rate, num_layers, hidden_units, dropout, weight_decay):
 
 		input_x = tf.nn.relu(sums)
 
-		if i == 0:
-			weights = W
-		else:
-			weights = tf.concat(weights, W, 0)
+
+		l2_loss += tf.nn.l2_loss(W)
 
 		if dropout:
 			#apply drop out
@@ -59,6 +59,8 @@ def buildGraph(learning_rate, num_layers, hidden_units, dropout, weight_decay):
 
 	#output layer
 	y_predicted, W = weighted_sum(sums, 10)
+
+	l2_loss += tf.nn.l2_loss(W)
 
 	#get cross entropy error
 	crossEntropyLoss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels = y_onehot, logits = y_predicted))
@@ -69,7 +71,7 @@ def buildGraph(learning_rate, num_layers, hidden_units, dropout, weight_decay):
 
 	#init optimizer
 	optimizer = tf.train.AdamOptimizer(learning_rate = learning_rate)
-	train = optimizer.minimize(loss=(crossEntropyLoss + weight_decay * tf.nn.l2_loss(weights)))
+	train = optimizer.minimize(loss=(crossEntropyLoss + weight_decay * l2_loss))
 
 	return X, y_target, y_predicted, crossEntropyLoss, train, accuracy
 
