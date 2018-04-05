@@ -57,7 +57,8 @@ def buildGraph(learning_rate, num_layers, hidden_units, dropout, weight_decay):
 	crossEntropyLoss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels = y_onehot, logits = y_predicted))
 
 	#compute accuracy
-	accuracy = tf.reduce_mean(tf.to_float(tf.equal(y_predicted, -1, tf.to_int64(y_target))))
+	accuracy = tf.reduce_mean(tf.to_float(tf.equal(tf.argmax(y_predicted, -1), tf.to_int64(y_target))))
+
 
 	#init optimizer
 	optimizer = tf.train.AdamOptimizer(learning_rate = learning_rate)
@@ -82,22 +83,22 @@ num_layers = 1
 hidden_units = 1000
 
 
+# other parameterys
+
+image_w = False
+plot = False
+
 
 # random parameters
 np.random.seed(int(time.time()))
 
 learning_rate = np.power(10, np.random.uniform(-7.5, -4.5))
-
-
 num_layers = np.random.randint(1, 6)
 hidden_units = np.random.randint(100, 501)
 weight_decay = np.power(e, np.random.uniform(-9, -6))
 dropout = np.random.randint(0, 2)
 
-# other parameterys
 
-image_w = False
-plot = False
 
 # vairables for uses
 
@@ -110,61 +111,70 @@ epoch_list = []
 
 numBatches = np.floor(len(trainData)/batch_size)
 
-X, y_target, y_predicted, crossEntropyLoss, train, accuracy = buildGraph(learning_rate, num_layers, hidden_units, dropout, weight_decay)
 
-init = tf.global_variables_initializer()
-sess = tf.InteractiveSession()
+lrs = [0.0001, 0.001, 0.05]
 
-sess.run(init)
+loss_array = []
 
-writer = tf.summary.FileWriter("./logs/images")
+for learning_rate in lrs:
 
-for k in range(0, max_iter):
-	index = (batch_size * k) % training_size
+	X, y_target, y_predicted, crossEntropyLoss, train, accuracy = buildGraph(learning_rate, num_layers, hidden_units, dropout, weight_decay)
 
-	batch_Data = trainData[index: index + batch_size]
-	batch_Target = trainTarget[index: index + batch_size]
+	init = tf.global_variables_initializer()
+	sess = tf.InteractiveSession()
 
-    #learning
-	_, loss, yhat, accu = sess.run([train, crossEntropyLoss, y_predicted, accuracy], feed_dict = {X: batch_Data, y_target: batch_Target})
+	sess.run(init)
 
-	if index == 0:
-		#get cross entropy loss
-		loss_list.append(loss)
+	writer = tf.summary.FileWriter("./logs/images")
 
-		#get training error
-		accu = accuracy.eval(feed_dict = {X: trainData, y_target: trainTarget})
-		trainError_list.append(1 - accu)
+	for k in range(0, max_iter):
+		index = (batch_size * k) % training_size
 
-		#get validation error
-		accu = accuracy.eval(feed_dict = {X: validData, y_target: validTarget})
-		validError_list.append(1 - accu)
+		batch_Data = trainData[index: index + batch_size]
+		batch_Target = trainTarget[index: index + batch_size]
 
-		#get test error
-		accu = accuracy.eval(feed_dict = {X: testData, y_target: testTarget})
-		testError_list.append(1 - accu)
+	    #learning
+		_, loss, yhat, accu = sess.run([train, crossEntropyLoss, y_predicted, accuracy], feed_dict = {X: batch_Data, y_target: batch_Target})
 
-		#get index
-		i = int((batch_size * k) / training_size)
+		if index == 0:
+			#get cross entropy loss
+			loss_list.append(loss)
 
-		#set index
-		epoch_list.append(i)
+			#get training error
+			accu = accuracy.eval(feed_dict = {X: trainData, y_target: trainTarget})
+			trainError_list.append(1 - accu)
 
-	if not (k % (max_iter / 4)):
-		print(" In progress " + str(100 * k / max_iter)  + "%")
+			#get validation error
+			accu = accuracy.eval(feed_dict = {X: validData, y_target: validTarget})
+			validError_list.append(1 - accu)
+
+			#get test error
+			accu = accuracy.eval(feed_dict = {X: testData, y_target: testTarget})
+			testError_list.append(1 - accu)
+
+			#get index
+			i = int((batch_size * k) / training_size)
+
+			#set index
+			epoch_list.append(i)
+
+		if not (k % (max_iter / 4)):
+			print(" In progress " + str(100 * k / max_iter)  + "%")
 
 
-		if image_w:
+			if image_w:
 
-			currentW = tf.get_default_graph().get_tensor_by_name("W:0")
+				currentW = tf.get_default_graph().get_tensor_by_name("W:0")
 
-			img = tf.reshape(currentW, shape=[-1, 28, 28, 1])
+				img = tf.reshape(currentW, shape=[-1, 28, 28, 1])
 
-			summary = sess.run(tf.summary.image("image" + str(k), img))
+				summary = sess.run(tf.summary.image("image" + str(k), img))
 
-			print(summary)
+				print(summary)
 
-			writer.add_summary(summary)
+				writer.add_summary(summary)
+
+	loss_array.append(loss_list)
 
 
 
@@ -196,24 +206,24 @@ if plot:
 	plt.plot(epoch_list, validError_list,'-', label = "validation set")
 	plt.plot(epoch_list, testError_list,'-', label = "test set")
 
-	plt.xlabel('number of epoches')
+	plt.xlabel('number of epochs')
 	plt.ylabel('error')
 	plt.legend()
 
-	plt.title("Nearul Network Errors with hidden units " + str(hidden_units))
+	plt.title("Errors with  learning_rate = " + str(learning_rate) +" layers = " + str(num_layers) +" hidden units = "+ str(hidden_units))
 	plt.show()
 
 
-
-
 	plt.figure(2)
-	plt.plot(epoch_list, loss_list,'-', label = "training set")
+	plt.plot(epoch_list, loss_list,'-', label = "learning_rate is " + str(learning_rate))
+	plt.plot(epoch_list, loss_array[0],'-', label = "learning_rate is 0.0001")
+	plt.plot(epoch_list, loss_array[1],'-', label = "learning_rate is 0.05")
 
-	plt.xlabel('number of epoches')
+	plt.xlabel('number of epochs')
 	plt.ylabel('cross entropy loss')
 	plt.legend()
 
-	plt.title("Nearul Network loss with hidden units " + str(hidden_units))
+	plt.title("Errors with" + " layers = " + str(num_layers) +" hidden units = "+ str(hidden_units))
 	plt.show()
 
 
