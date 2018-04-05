@@ -39,7 +39,7 @@ def buildGraph(learning_rate, num_layers, hidden_units, dropout, weight_decay):
 
 
 	#init the input
-	sums= X_flatten
+	sums = X_flatten
 
 	for i in range(0, num_layers):
 
@@ -56,7 +56,8 @@ def buildGraph(learning_rate, num_layers, hidden_units, dropout, weight_decay):
 			sums = tf.nn.dropout(sums, 0.5)
 
 	#output layer
-	y_predicted = weighted_sum(sums, 10)
+	y_predicted, W = weighted_sum(sums, 10)
+	weights = tf.concat(weights, W, 0)
 
 	#get cross entropy error
 	crossEntropyLoss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels = y_onehot, logits = y_predicted))
