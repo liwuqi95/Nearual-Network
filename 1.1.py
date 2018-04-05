@@ -94,8 +94,8 @@ hidden_units = 500
 # other parameterys
 
 image_w = False
-plot = True
-random = False
+plot = False
+random = True
 
 
 # random parameters
@@ -115,7 +115,7 @@ if random:
 numBatches = np.floor(len(trainData)/batch_size)
 
 
-lrs = [0.001]
+lrs = [learning_rate]
 
 loss_array = []
 
