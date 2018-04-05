@@ -215,7 +215,7 @@ for learning_rate in lrs:
 	print("Test error       = " + str(testError_list[-1]))
 
 	print("######### Early Stop #########")
-	print("number of epoch  = " + str(loss_list[-1]))
+	print("number of epoch  = " + str(early_i))
 	print("Training error   = " + str(early_n_e))
 	print("Validation error = " + str(early_v_e))
 	print("Test error       = " + str(early_t_e))
