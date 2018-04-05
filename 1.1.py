@@ -87,16 +87,18 @@ hidden_units = 1000
 
 image_w = False
 plot = True
+random = False
 
 
 # random parameters
-np.random.seed(int(time.time()))
+if random:
+	np.random.seed(int(time.time()))
 
-learning_rate = np.power(10, np.random.uniform(-7.5, -4.5))
-num_layers = np.random.randint(1, 6)
-hidden_units = np.random.randint(100, 501)
-weight_decay = np.power(e, np.random.uniform(-9, -6))
-dropout = np.random.randint(0, 2)
+	learning_rate = np.power(10, np.random.uniform(-7.5, -4.5))
+	num_layers = np.random.randint(1, 6)
+	hidden_units = np.random.randint(100, 501)
+	weight_decay = np.power(e, np.random.uniform(-9, -6))
+	dropout = np.random.randint(0, 2)
 
 
 
