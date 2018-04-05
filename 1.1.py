@@ -114,7 +114,7 @@ if random:
 numBatches = np.floor(len(trainData)/batch_size)
 
 
-lrs = [0.0001, 0.001, 0.01]
+lrs = [0.001]
 
 loss_array = []
 
