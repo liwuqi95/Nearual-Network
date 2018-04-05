@@ -54,7 +54,7 @@ def buildGraph(learning_rate, num_layers, hidden_units, dropout, weight_decay):
 	y_predicted = weighted_sum(sums, 10)
 
 	#get cross entropy error
-	crossEntropyLoss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels = y_onehot, logits = y_predicted))
+	crossEntropyLoss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels = y_onehot, logits = tf.nn.softmax(y_predicted)))
 
 	#compute accuracy
 	accuracy = tf.reduce_mean(tf.to_float(tf.equal(tf.argmax(y_predicted, -1), tf.to_int64(y_target))))
