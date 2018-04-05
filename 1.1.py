@@ -67,7 +67,7 @@ def buildGraph(learning_rate, num_layers, hidden_units, dropout, weight_decay):
 
 	#init optimizer
 	optimizer = tf.train.AdamOptimizer(learning_rate = learning_rate)
-	train = optimizer.minimize(loss=(crossEntropyLoss + weight_decay))
+	train = optimizer.minimize(loss=(crossEntropyLoss + weight_decay * tf.nn.l2_loss(weights)))
 
 	return X, y_target, y_predicted, crossEntropyLoss, train, accuracy
 
