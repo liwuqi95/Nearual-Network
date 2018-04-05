@@ -229,7 +229,7 @@ if plot:
 	plt.figure(2)
 
 	for index, item in enumerate(loss_array):
-		plt.plot(epoch_list, loss_array[index],'-', label = "learning_rate is " + lrs[index])
+		plt.plot(epoch_list, loss_array[index],'-', label = "learning_rate is " + str(lrs[index]))
 
 	plt.xlabel('number of epochs')
 	plt.ylabel('cross entropy loss')
