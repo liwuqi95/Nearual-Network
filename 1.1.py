@@ -39,12 +39,14 @@ def buildGraph(learning_rate, num_layers, hidden_units, dropout, weight_decay):
 
 
 	#init the input
-	sums = X_flatten
+	input_x = X_flatten
 
 	for i in range(0, num_layers):
 
 		#get sums
-		sums, W = tf.nn.relu(weighted_sum(sums, hidden_units))
+		sums, W = weighted_sum(input_x, hidden_units)
+
+		input_x = tf.nn.relu(sums)
 
 		if i == 0:
 			weights = W
@@ -53,7 +55,7 @@ def buildGraph(learning_rate, num_layers, hidden_units, dropout, weight_decay):
 
 		if dropout:
 			#apply drop out
-			sums = tf.nn.dropout(sums, 0.5)
+			input_x = tf.nn.dropout(input_x, 0.5)
 
 	#output layer
 	y_predicted, W = weighted_sum(sums, 10)
