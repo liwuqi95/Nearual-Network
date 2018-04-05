@@ -142,7 +142,7 @@ for k in range(0, max_iter):
 
 		img = tf.reshape(currentW, shape=[-1, 28, 28, 1])
 
-		summary = tf.summary.image("image", img)
+		summary = sess.run(tf.summary.image("image", img))
 
 		writer.add_summary(summary)
 
