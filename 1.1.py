@@ -184,6 +184,21 @@ for learning_rate in lrs:
 
 				writer.add_summary(summary)
 
+
+	print("######### Hyper parameters #########")
+	print("Learning rate    = " + str(learning_rate))
+	print("Layers           = " + str(num_layers))
+	print("Hidden units     = " + str (hidden_units))
+	print("Weithed decay    = " + str(weight_decay))
+	print("Dropout          = " + str(dropout))
+
+	print("######### Result #########")
+
+	print("Final loss       = " + str(loss_list[-1]))
+	print("Training error   = " + str(trainError_list[-1]))
+	print("Validation error = " + str(validError_list[-1]))
+	print("Test error       = " + str(testError_list[-1]))
+	
 	loss_array.append(loss_list)
 
 
@@ -194,20 +209,7 @@ for learning_rate in lrs:
 
 
 
-print("######### Hyper parameters #########")
 
-print("Learning rate    = " + str(learning_rate))
-print("Layers           = " + str(num_layers))
-print("Hidden units     = " + str (hidden_units))
-print("Weithed decay    = " + str(weight_decay))
-print("Dropout          = " + str(dropout))
-
-print("######### Result #########")
-
-print("Final loss       = " + str(loss_list[-1]))
-print("Training error   = " + str(trainError_list[-1]))
-print("Validation error = " + str(validError_list[-1]))
-print("Test error       = " + str(testError_list[-1]))
 
 
 if plot:
