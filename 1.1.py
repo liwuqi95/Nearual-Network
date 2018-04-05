@@ -58,7 +58,7 @@ def buildGraph(learning_rate, num_layers, hidden_units, dropout, weight_decay):
 			input_x = tf.nn.dropout(input_x, 0.5)
 
 	#output layer
-	y_predicted, W = weighted_sum(sums, 10)
+	y_predicted, W = weighted_sum(input_x, 10)
 
 	l2_loss += tf.nn.l2_loss(W)
 
