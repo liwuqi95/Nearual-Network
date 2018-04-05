@@ -102,14 +102,7 @@ if random:
 
 
 
-# vairables for uses
 
-trainError_list = []
-validError_list = []
-testError_list = []
-
-loss_list = []
-epoch_list = []
 
 numBatches = np.floor(len(trainData)/batch_size)
 
@@ -119,6 +112,14 @@ lrs = [0.0001, 0.001, 0.05]
 loss_array = []
 
 for learning_rate in lrs:
+
+	# vairables for uses
+	trainError_list = []
+	validError_list = []
+	testError_list = []
+
+	loss_list = []
+	epoch_list = []
 
 	X, y_target, y_predicted, crossEntropyLoss, train, accuracy = buildGraph(learning_rate, num_layers, hidden_units, dropout, weight_decay)
 
