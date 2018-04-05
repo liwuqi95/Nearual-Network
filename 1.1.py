@@ -137,7 +137,7 @@ for learning_rate in lrs:
 
 	writer = tf.summary.FileWriter("./logs/images")
 
-	early_n_e = 10000
+	early_v_e = 10000
 
 	for k in range(0, max_iter):
 		index = (batch_size * k) % training_size
