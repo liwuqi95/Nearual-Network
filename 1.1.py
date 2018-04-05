@@ -198,7 +198,7 @@ for learning_rate in lrs:
 	print("Training error   = " + str(trainError_list[-1]))
 	print("Validation error = " + str(validError_list[-1]))
 	print("Test error       = " + str(testError_list[-1]))
-	
+
 	loss_array.append(loss_list)
 
 
@@ -235,7 +235,7 @@ if plot:
 	plt.ylabel('cross entropy loss')
 	plt.legend()
 
-	plt.title("Errors with" + " layers = " + str(num_layers) +" hidden units = "+ str(hidden_units))
+	plt.title("Training loss with" + " layers = " + str(num_layers) +" hidden units = "+ str(hidden_units))
 	plt.show()
 
 
