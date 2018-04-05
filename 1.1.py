@@ -136,7 +136,11 @@ for k in range(0, max_iter):
 	if not (k % (max_iter / 4)):
 		print(" In progress " + str(100 * k / max_iter)  + "%")
 
-		print(sess.run(tf.get_default_graph().get_tensor_by_name("W:0")))
+		currentW = tf.get_default_graph().get_tensor_by_name("W:0")
+
+		img = tf.reshape(currentW, shape=[-1, 28, 28, 1])
+
+		tf.summary.image("image", img)
 
 
 print("Final loss is  " + str(loss_list[-1]))
