@@ -84,7 +84,7 @@ max_iter = 20000
 
 # hyper parameters
 learning_rate = 0.001
-weight_decay = 3 * e - 4
+weight_decay = 0
 dropout = False
 num_layers = 1
 hidden_units = 1000
@@ -114,7 +114,7 @@ if random:
 numBatches = np.floor(len(trainData)/batch_size)
 
 
-lrs = [0.0001, 0.001, 0.01]
+lrs = [0.001]
 
 loss_array = []
 
