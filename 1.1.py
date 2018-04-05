@@ -24,7 +24,7 @@ def weighted_sum(X, unit_num):
     W = tf.Variable(initializer([X.shape[1].value, unit_num]), name='W')
     b = tf.Variable(tf.zeros(unit_num), name='b')
 
-    return tf.add(tf.matmul(X, W), b)
+    return tf.add(tf.matmul(X, W), b), W
 
 
 def buildGraph(learning_rate, num_layers, hidden_units, dropout, weight_decay):
@@ -39,12 +39,17 @@ def buildGraph(learning_rate, num_layers, hidden_units, dropout, weight_decay):
 
 
 	#init the input
-	sums = X_flatten
+	sums= X_flatten
 
 	for i in range(0, num_layers):
 
 		#get sums
-		sums = tf.nn.relu(weighted_sum(sums, hidden_units))
+		sums, W = tf.nn.relu(weighted_sum(sums, hidden_units))
+
+		if i == 0:
+			weights = W
+		else:
+			weights = tf.concat(weights, W, 0)
 
 		if dropout:
 			#apply drop out
@@ -107,7 +112,7 @@ if random:
 numBatches = np.floor(len(trainData)/batch_size)
 
 
-lrs = [0.0001, 0.001, 0.05]
+lrs = [0.0001, 0.001, 0.01]
 
 loss_array = []
 
@@ -221,7 +226,7 @@ if plot:
 	
 	plt.plot(epoch_list, loss_array[0],'-', label = "learning_rate is 0.0001")
 	plt.plot(epoch_list, loss_array[1],'-', label = "learning_rate is 0.001")
-	plt.plot(epoch_list, loss_array[2],'-', label = "learning_rate is 0.05")
+	plt.plot(epoch_list, loss_array[2],'-', label = "learning_rate is 0.01")
 
 	plt.xlabel('number of epochs')
 	plt.ylabel('cross entropy loss')
