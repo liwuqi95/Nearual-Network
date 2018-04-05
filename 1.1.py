@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from math import e
 import os
+import time
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 with np.load("notMNIST.npz") as data:
@@ -83,7 +84,7 @@ hidden_units = 1000
 
 
 # random parameters
-np.random.seed(1000292033)
+np.random.seed(int(time.time()))
 
 learning_rate = np.power(10, np.random.uniform(-7.5, -4.5))
 
