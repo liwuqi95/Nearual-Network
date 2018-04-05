@@ -137,6 +137,8 @@ for learning_rate in lrs:
 
 	writer = tf.summary.FileWriter("./logs/images")
 
+	early_n_e = 10000
+
 	for k in range(0, max_iter):
 		index = (batch_size * k) % training_size
 
@@ -147,6 +149,10 @@ for learning_rate in lrs:
 		_, loss, yhat, accu = sess.run([train, crossEntropyLoss, y_predicted, accuracy], feed_dict = {X: batch_Data, y_target: batch_Target})
 
 		if index == 0:
+
+			#get index
+			i = int((batch_size * k) / training_size)
+
 			#get cross entropy loss
 			loss_list.append(loss)
 
@@ -158,12 +164,21 @@ for learning_rate in lrs:
 			accu = accuracy.eval(feed_dict = {X: validData, y_target: validTarget})
 			validError_list.append(1 - accu)
 
+			v_error = 1 - accu
+
 			#get test error
 			accu = accuracy.eval(feed_dict = {X: testData, y_target: testTarget})
 			testError_list.append(1 - accu)
 
-			#get index
-			i = int((batch_size * k) / training_size)
+
+			if (early_n_e > validError_list[-1]):
+				early_i = i
+				early_n_e = trainError_list[-1]
+				early_v_e = validError_list[-1]
+				early_t_e = testError_list[-1]
+
+
+
 
 			#set index
 			epoch_list.append(i)
@@ -198,6 +213,12 @@ for learning_rate in lrs:
 	print("Training error   = " + str(trainError_list[-1]))
 	print("Validation error = " + str(validError_list[-1]))
 	print("Test error       = " + str(testError_list[-1]))
+
+	print("######### Early Stop #########")
+	print("number of epoch  = " + str(loss_list[-1]))
+	print("Training error   = " + str(early_n_e))
+	print("Validation error = " + str(early_v_e))
+	print("Test error       = " + str(early_t_e))
 
 	loss_array.append(loss_list)
 
