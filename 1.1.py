@@ -191,10 +191,10 @@ for learning_rate in lrs:
 				print((currentW.transpose()).shape)
 				currentW = currentW.transpose()
 
-				for i in range(0, currentW.shape[1]):
+				for i in range(0, currentW.shape[0]):
 					index = i % 100
 					if (index == 0):
-						plt.figure()
+						plt.figure("progress-"+str(100 * k / max_iter) + "  img-"+str(int(i / 100)))
 
 
 					plt.subplot(10,10, index + 1)
